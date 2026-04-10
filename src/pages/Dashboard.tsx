@@ -170,7 +170,7 @@ export default function Dashboard() {
             </div>
           ) : (backendSignals.length > 0 ? backendSignals : signals.filter(s=>s.scoreLabel==='strong')).slice(0,3).map((s: any) => (
             <div key={s.id} className="flex items-center justify-between py-2 border-b border-[#1F2937] last:border-0">
-              <div className="flex items-center gap-2"><span className="font-bold text-white text-sm" style={M}>{(s.symbol|| 'https://smartflow-pro-backend-production.up.railway.app').replace('USDT','')}</span><span className="text-[10px] px-1.5 py-0.5 rounded font-bold" style={{background:s.direction==='LONG'||s.direction==='long'?'#00FFA3'+'20':'#FF4D4D'+'20',color:s.direction==='LONG'||s.direction==='long'?'#00FFA3':'#FF4D4D'}}>{s.direction==='LONG'||s.direction==='long'?'??':'?征'}</span></div>
+              <div className="flex items-center gap-2"><span className="font-bold text-white text-sm" style={M}>{(s.symbol|| '').replace('USDT','')}</span><span className="text-[10px] px-1.5 py-0.5 rounded font-bold" style={{background:s.direction==='LONG'||s.direction==='long'?'#00FFA3'+'20':'#FF4D4D'+'20',color:s.direction==='LONG'||s.direction==='long'?'#00FFA3':'#FF4D4D'}}>{s.direction==='LONG'||s.direction==='long'?'??':'?征'}</span></div>
               <div className="text-right"><div className="text-xs text-white" style={M}>${fp(s.entry)}</div><div className="text-[10px] text-[#00FFA3]" style={M}>{s.score}/13</div></div>
             </div>
           ))}
@@ -213,4 +213,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
 
