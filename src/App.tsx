@@ -5,6 +5,7 @@ import SignalsPage from './pages/SignalsPage';
 import SmartMoneyPage from './pages/SmartMoneyPage';
 import AlertsPage from './pages/AlertsPage';
 import PortfolioPage from './pages/PortfolioPage';
+import SignalNotification from './components/SignalNotification';
 import { useWebSocket } from './hooks/useWebSocket';
 
 function AppInner() {
@@ -12,6 +13,7 @@ function AppInner() {
   return (
     <div className="min-h-screen bg-[#0A0E1A] text-[#C8CCD8]" style={{ fontFamily: "'Noto Sans TC', sans-serif" }}>
       <Navbar />
+      <SignalNotification />
       <main className="px-4 py-4 md:px-6 max-w-[1600px] mx-auto pb-16">
         <Routes>
           <Route path="/" element={<Dashboard />} />
