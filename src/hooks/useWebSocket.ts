@@ -162,3 +162,5 @@ export function useBinanceDirectWS(onTicker: (data: any) => void, enabled = true
   }, [connect, enabled]);
 }
 
+
+export const useWebSocket = useBackendWebSocket;

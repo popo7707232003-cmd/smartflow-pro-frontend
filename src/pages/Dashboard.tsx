@@ -26,7 +26,7 @@ function CoinCard({ coin, bias }: { coin: CoinTicker; bias?: any }) {
   const biasDir = bias?.overall || coin.bias || 'WAIT';
   const biasLabel = biasDir === 'LONG' ? '??' : biasDir === 'SHORT' ? '?征' : 'WAIT';
   const bc = biasDir === 'LONG' ? '#00FFA3' : biasDir === 'SHORT' ? '#FF4D4D' : '#5A6080';
-  const arrow = biasDir === 'LONG' ? '?? : biasDir === 'SHORT' ? '?? : '??;
+  const arrow = biasDir === 'LONG' ? String.fromCharCode(8599) : biasDir === 'SHORT' ? String.fromCharCode(8600) : String.fromCharCode(8594);
   const conf = bias?.confidence === 'high' ? '100%' : bias?.confidence === 'medium' ? '67%' : bias ? '33%' : '';
   return (
     <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-3.5 hover:border-[#2D3748] transition-all min-w-[140px] flex-1">
