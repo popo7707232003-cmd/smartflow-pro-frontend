@@ -68,8 +68,8 @@ async function analyzeSymbol(symbol: string, name: string): Promise<FrontendSign
     if (!atr || atr <= 0) return null;
 
     const change24h = ((price - closes[Math.max(0, closes.length - 25)]) / closes[Math.max(0, closes.length - 25)]) * 100;
-    const priceUp = change24h > 0.5;
-    const priceDown = change24h < -0.5;
+    const priceUp = change24h > 0.2;
+    const priceDown = change24h < -0.2;
 
     // Volume confirmation
     const avgVol = volumes.slice(-21, -1).reduce((a: number, b: number) => a + b, 0) / 20;
@@ -127,7 +127,7 @@ async function analyzeSymbol(symbol: string, name: string): Promise<FrontendSign
     const score = isLong ? longScore : shortScore;
     const conds = isLong ? longConds : shortConds;
 
-    if (score < 5) return null; // Minimum 5/13
+    if (score < 3) return null; // Minimum 5/13
 
     const direction = isLong ? 'long' : 'short';
     const slDist = atr * 1.5;
@@ -137,7 +137,7 @@ async function analyzeSymbol(symbol: string, name: string): Promise<FrontendSign
     const tp1 = isLong ? price + tp1Dist : price - tp1Dist;
     const tp2 = isLong ? price + tp2Dist : price - tp2Dist;
     const rr = +(tp1Dist / slDist).toFixed(2);
-    if (rr < 1.5) return null;
+    if (rr < 1.0) return null;
 
     const d = price >= 10000 ? 1 : price >= 100 ? 2 : price >= 1 ? 3 : 5;
     const warnings: string[] = [];
