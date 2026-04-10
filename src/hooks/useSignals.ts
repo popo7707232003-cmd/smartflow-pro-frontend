@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+﻿import { useState, useEffect, useCallback, useRef } from 'react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://smartflow-pro-backend-production.up.railway.app';
 
@@ -126,3 +126,4 @@ export function usePerformance(pollInterval = 60000) {
 
   return { data, loading, refetch: fetchPerf };
 }
+

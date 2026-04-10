@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://smartflow-pro-backend-production.up.railway.app';
 
@@ -39,7 +39,7 @@ export function useSmartMoney(pollInterval = 60000) {
       if (json.success) {
         setTransactions(json.data.transactions || []);
         setBias(json.data.bias || null);
-        setSource(json.data.source || '');
+        setSource(json.data.source || 'https://smartflow-pro-backend-production.up.railway.app');
         setNoApiKey(json.data.transactions?.length === 0 && json.data.message?.includes('No API key'));
       }
     } catch (err: any) {
@@ -136,3 +136,4 @@ export function useEconomicCalendar() {
 
   return { events, loading };
 }
+

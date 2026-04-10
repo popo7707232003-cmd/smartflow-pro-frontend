@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+﻿import { useEffect, useRef, useCallback } from 'react';
 import { create } from 'zustand';
 
 // ===== Connection Status Store =====
@@ -161,3 +161,4 @@ export function useBinanceDirectWS(onTicker: (data: any) => void, enabled = true
     };
   }, [connect, enabled]);
 }
+

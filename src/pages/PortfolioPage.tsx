@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useBinancePrices } from '../hooks/useBinancePrices';
 const M = { fontFamily: "'JetBrains Mono', monospace" } as const;
-const API = import.meta.env.VITE_API_URL || '';
+const API = import.meta.env.VITE_API_URL || 'https://smartflow-pro-backend-production.up.railway.app';
 
 export default function PortfolioPage() {
   const { tickers } = useBinancePrices();
@@ -40,17 +40,17 @@ export default function PortfolioPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold text-white">📊 績效日誌</h1>
+      <h1 className="text-xl font-bold text-white">?? 蝮暹??亥?</h1>
 
       {/* Stats cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {[
-          ['總訊號', s.totalSignals, '#4D9FFF'],
-          ['勝率', s.totalSignals > 0 ? s.winRate + '%' : '—', s.winRate >= 50 ? '#00FFA3' : '#FFB800'],
-          ['盈利因子', s.totalSignals > 0 ? s.profitFactor : '—', s.profitFactor >= 1.5 ? '#00FFA3' : '#FFB800'],
-          ['總損益', s.totalSignals > 0 ? (s.totalPnl >= 0 ? '+' : '') + s.totalPnl + '%' : '—', s.totalPnl >= 0 ? '#00FFA3' : '#FF4D4D'],
-          ['平均獲利', s.totalSignals > 0 ? '+' + s.avgWin + '%' : '—', '#00FFA3'],
-          ['平均虧損', s.totalSignals > 0 ? '-' + s.avgLoss + '%' : '—', '#FF4D4D'],
+          ['蝮質???, s.totalSignals, '#4D9FFF'],
+          ['??', s.totalSignals > 0 ? s.winRate + '%' : '??, s.winRate >= 50 ? '#00FFA3' : '#FFB800'],
+          ['???', s.totalSignals > 0 ? s.profitFactor : '??, s.profitFactor >= 1.5 ? '#00FFA3' : '#FFB800'],
+          ['蝮賣???, s.totalSignals > 0 ? (s.totalPnl >= 0 ? '+' : '') + s.totalPnl + '%' : '??, s.totalPnl >= 0 ? '#00FFA3' : '#FF4D4D'],
+          ['撟喳??脣', s.totalSignals > 0 ? '+' + s.avgWin + '%' : '??, '#00FFA3'],
+          ['撟喳??扳?', s.totalSignals > 0 ? '-' + s.avgLoss + '%' : '??, '#FF4D4D'],
         ].map(([label, value, color]) => (
           <div key={label as string} className="bg-[#111827] border border-[#1F2937] rounded-xl p-4 hover:border-[#2D3748] transition-all">
             <div className="text-[11px] text-[#5A6080] mb-1">{label}</div>
@@ -63,8 +63,8 @@ export default function PortfolioPage() {
       {s.totalSignals > 0 && (
         <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-[#8B95B0]">勝率分佈</span>
-            <span className="text-xs" style={M}><span className="text-[#00FFA3]">{s.wins}勝</span> / <span className="text-[#FF4D4D]">{s.losses}負</span></span>
+            <span className="text-sm text-[#8B95B0]">????</span>
+            <span className="text-xs" style={M}><span className="text-[#00FFA3]">{s.wins}??/span> / <span className="text-[#FF4D4D]">{s.losses}鞎?/span></span>
           </div>
           <div className="h-4 bg-[#1F2937] rounded-full overflow-hidden flex">
             <div className="h-full bg-[#00FFA3] transition-all" style={{ width: `${s.winRate}%` }} />
@@ -76,7 +76,7 @@ export default function PortfolioPage() {
       {/* Symbol stats */}
       {symbolStats.length > 0 && (
         <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-4">
-          <h3 className="text-sm text-[#8B95B0] mb-3">各幣種績效</h3>
+          <h3 className="text-sm text-[#8B95B0] mb-3">?馳蝔桃蜀??/h3>
           <div className="space-y-2">
             {symbolStats.map((ss: any) => (
               <div key={ss.symbol} className="flex items-center gap-3">
@@ -84,7 +84,7 @@ export default function PortfolioPage() {
                 <div className="flex-1 h-3 bg-[#1F2937] rounded-full overflow-hidden">
                   <div className="h-full rounded-full bg-[#00FFA3]" style={{ width: `${ss.winRate}%` }} />
                 </div>
-                <span className="text-xs w-20 text-right" style={{ ...M, color: ss.winRate >= 50 ? '#00FFA3' : '#FF4D4D' }}>{ss.winRate}% ({ss.total}筆)</span>
+                <span className="text-xs w-20 text-right" style={{ ...M, color: ss.winRate >= 50 ? '#00FFA3' : '#FF4D4D' }}>{ss.winRate}% ({ss.total}蝑?</span>
               </div>
             ))}
           </div>
@@ -93,23 +93,23 @@ export default function PortfolioPage() {
 
       {/* Trade history */}
       <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-4">
-        <h3 className="text-sm text-[#8B95B0] mb-3">交易歷史</h3>
+        <h3 className="text-sm text-[#8B95B0] mb-3">鈭斗?甇瑕</h3>
         {trades.length > 0 ? (
           <div className="space-y-2">
             {trades.map((t: any, i: number) => {
               const isWin = t.result === 'win' || t.result === 'partial';
               const bc = isWin ? '#00FFA3' : t.result === 'loss' ? '#FF4D4D' : '#FFB800';
-              const label = t.exitType === 'tp2' ? '✅TP2' : t.exitType === 'tp1_partial' ? '🟡TP1' : t.exitType === 'sl' ? '❌SL' : t.exitType === 'expired' ? '⏰過期' : t.exitType;
+              const label = t.exitType === 'tp2' ? '?P2' : t.exitType === 'tp1_partial' ? '?TP1' : t.exitType === 'sl' ? '?L' : t.exitType === 'expired' ? '?圈??? : t.exitType;
               return (
                 <div key={i} className="flex items-center gap-3 py-2 border-b border-[#1F2937] last:border-0" style={{ borderLeftWidth: 3, borderLeftColor: bc }}>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-bold text-white">{t.symbol?.replace('USDT','')}</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: (t.direction === 'LONG' || t.direction === 'long' ? '#00FFA3' : '#FF4D4D') + '20', color: t.direction === 'LONG' || t.direction === 'long' ? '#00FFA3' : '#FF4D4D' }}>{t.direction === 'LONG' || t.direction === 'long' ? '做多' : '做空'}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: (t.direction === 'LONG' || t.direction === 'long' ? '#00FFA3' : '#FF4D4D') + '20', color: t.direction === 'LONG' || t.direction === 'long' ? '#00FFA3' : '#FF4D4D' }}>{t.direction === 'LONG' || t.direction === 'long' ? '??' : '?征'}</span>
                       <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: bc + '20', color: bc }}>{label}</span>
                     </div>
                     <div className="text-[10px] mt-0.5" style={M}>
-                      進場 ${parseFloat(t.entry).toFixed(2)} → 出場 ${parseFloat(t.exitPrice).toFixed(2)} | 評分 {t.score}/13
+                      ?脣 ${parseFloat(t.entry).toFixed(2)} ???箏 ${parseFloat(t.exitPrice).toFixed(2)} | 閰? {t.score}/13
                     </div>
                   </div>
                   <div className="text-right">
@@ -124,16 +124,16 @@ export default function PortfolioPage() {
           </div>
         ) : (
           <div className="text-center py-8">
-            <span className="text-3xl">📊</span>
-            <p className="text-sm text-[#5A6080] mt-3">等待訊號觸及 TP 或 SL</p>
-            <p className="text-xs text-[#3D4560] mt-1">訊號追蹤器每 30 秒自動檢查</p>
+            <span className="text-3xl">??</span>
+            <p className="text-sm text-[#5A6080] mt-3">蝑?閮?閫詨? TP ??SL</p>
+            <p className="text-xs text-[#3D4560] mt-1">閮?餈質馱?冽? 30 蝘?炎??/p>
           </div>
         )}
       </div>
 
       {/* Market overview */}
       <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-4">
-        <h3 className="text-sm text-[#8B95B0] mb-3">市場概況</h3>
+        <h3 className="text-sm text-[#8B95B0] mb-3">撣璁?</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
           {tickers.map(t => (
             <div key={t.symbol} className="bg-[#0A0E1A] rounded-lg p-3 text-center">
@@ -147,3 +147,4 @@ export default function PortfolioPage() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import { useWSStatus } from '../hooks/useWebSocket';
+﻿import { useWSStatus } from '../hooks/useWebSocket';
 import { useState, useEffect } from 'react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://smartflow-pro-backend-production.up.railway.app';
@@ -26,7 +26,7 @@ export default function StatusBar() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-700 px-4 py-2 flex items-center gap-5 text-xs text-gray-400 z-50">
-      <StatusDot label="後端 WS" connected={backendWS} />
+      <StatusDot label="敺垢 WS" connected={backendWS} />
       <StatusDot label="Binance WS" connected={binanceWS} />
       <StatusDot label="PostgreSQL" connected={dbOk} />
       <div className="flex items-center gap-1.5">
@@ -54,3 +54,4 @@ function StatusDot({ label, connected }: { label: string; connected: boolean }) 
     </div>
   );
 }
+
