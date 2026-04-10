@@ -7,139 +7,81 @@ export default function PortfolioPage() {
   const { tickers } = useBinancePrices();
   const [stats, setStats] = useState<any>(null);
   const [trades, setTrades] = useState<any[]>([]);
-  const [symbolStats, setSymbolStats] = useState<any[]>([]);
 
   useEffect(() => {
-    // Fetch performance stats
-    fetch(`${API}/api/performance`).then(r=>r.json()).then(d=>{
-      if(d.success) {
-        setStats(d.data.summary);
-        setTrades(d.data.recentTrades || []);
-        // Build symbol stats from recent trades
-        const syms: Record<string, {total:number,wins:number}> = {};
-        for (const t of (d.data.recentTrades || [])) {
-          if (!syms[t.symbol]) syms[t.symbol] = {total:0,wins:0};
-          syms[t.symbol].total++;
-          if (t.result === 'win' || t.result === 'partial') syms[t.symbol].wins++;
-        }
-        setSymbolStats(Object.entries(syms).map(([symbol, s]) => ({
-          symbol, total: s.total, winRate: s.total > 0 ? Math.round(s.wins/s.total*100) : 0
-        })));
-      }
+    const f = () => fetch(API+'/api/performance').then(r=>r.json()).then(d=>{
+      if(d.success){ setStats(d.data.summary); setTrades(d.data.recentTrades||[]); }
     }).catch(()=>{});
-
-    const iv = setInterval(() => {
-      fetch(`${API}/api/performance`).then(r=>r.json()).then(d=>{
-        if(d.success) setStats(d.data.summary);
-      }).catch(()=>{});
-    }, 30000);
-    return () => clearInterval(iv);
+    f(); const iv = setInterval(f, 30000); return () => clearInterval(iv);
   }, []);
 
   const s = stats || { totalSignals:0, wins:0, losses:0, winRate:0, profitFactor:0, totalPnl:0, avgWin:0, avgLoss:0 };
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold text-white">?? 蝮暹??亥?</h1>
-
-      {/* Stats cards */}
+      <h1 className="text-xl font-bold text-white">績效日誌</h1>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {[
-          ['蝮質???, s.totalSignals, '#4D9FFF'],
-          ['??', s.totalSignals > 0 ? s.winRate + '%' : '??, s.winRate >= 50 ? '#00FFA3' : '#FFB800'],
-          ['???', s.totalSignals > 0 ? s.profitFactor : '??, s.profitFactor >= 1.5 ? '#00FFA3' : '#FFB800'],
-          ['蝮賣???, s.totalSignals > 0 ? (s.totalPnl >= 0 ? '+' : '') + s.totalPnl + '%' : '??, s.totalPnl >= 0 ? '#00FFA3' : '#FF4D4D'],
-          ['撟喳??脣', s.totalSignals > 0 ? '+' + s.avgWin + '%' : '??, '#00FFA3'],
-          ['撟喳??扳?', s.totalSignals > 0 ? '-' + s.avgLoss + '%' : '??, '#FF4D4D'],
+          ['總訊號', String(s.totalSignals), '#4D9FFF'],
+          ['勝率', s.totalSignals > 0 ? s.winRate+'%' : '\u2014', s.winRate >= 50 ? '#00FFA3' : '#FFB800'],
+          ['盈利因子', s.totalSignals > 0 ? String(s.profitFactor) : '\u2014', s.profitFactor >= 1.5 ? '#00FFA3' : '#FFB800'],
+          ['總損益', s.totalSignals > 0 ? (s.totalPnl>=0?'+':'')+s.totalPnl+'%' : '\u2014', s.totalPnl >= 0 ? '#00FFA3' : '#FF4D4D'],
+          ['平均獲利', s.totalSignals > 0 ? '+'+s.avgWin+'%' : '\u2014', '#00FFA3'],
+          ['平均虧損', s.totalSignals > 0 ? s.avgLoss+'%' : '\u2014', '#FF4D4D'],
         ].map(([label, value, color]) => (
-          <div key={label as string} className="bg-[#111827] border border-[#1F2937] rounded-xl p-4 hover:border-[#2D3748] transition-all">
+          <div key={label as string} className="bg-[#111827] border border-[#1F2937] rounded-xl p-4">
             <div className="text-[11px] text-[#5A6080] mb-1">{label}</div>
-            <div className="text-xl font-bold" style={{ ...M, color: color as string }}>{value}</div>
+            <div className="text-xl font-bold" style={{...M, color: color as string}}>{value}</div>
           </div>
         ))}
       </div>
 
-      {/* Win rate bar */}
       {s.totalSignals > 0 && (
         <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-[#8B95B0]">????</span>
-            <span className="text-xs" style={M}><span className="text-[#00FFA3]">{s.wins}??/span> / <span className="text-[#FF4D4D]">{s.losses}鞎?/span></span>
+            <span className="text-sm text-[#8B95B0]">勝率分佈</span>
+            <span className="text-xs" style={M}><span className="text-[#00FFA3]">{s.wins}勝</span> / <span className="text-[#FF4D4D]">{s.losses}負</span></span>
           </div>
           <div className="h-4 bg-[#1F2937] rounded-full overflow-hidden flex">
-            <div className="h-full bg-[#00FFA3] transition-all" style={{ width: `${s.winRate}%` }} />
-            <div className="h-full bg-[#FF4D4D] transition-all" style={{ width: `${100 - s.winRate}%` }} />
+            <div className="h-full bg-[#00FFA3]" style={{width: s.winRate+'%'}} />
+            <div className="h-full bg-[#FF4D4D]" style={{width: (100-s.winRate)+'%'}} />
           </div>
         </div>
       )}
 
-      {/* Symbol stats */}
-      {symbolStats.length > 0 && (
-        <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-4">
-          <h3 className="text-sm text-[#8B95B0] mb-3">?馳蝔桃蜀??/h3>
+      <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-4">
+        <h3 className="text-sm text-[#8B95B0] mb-3">交易歷史</h3>
+        {trades.length > 0 ? (
           <div className="space-y-2">
-            {symbolStats.map((ss: any) => (
-              <div key={ss.symbol} className="flex items-center gap-3">
-                <span className="text-sm font-bold text-white w-16">{ss.symbol.replace('USDT','')}</span>
-                <div className="flex-1 h-3 bg-[#1F2937] rounded-full overflow-hidden">
-                  <div className="h-full rounded-full bg-[#00FFA3]" style={{ width: `${ss.winRate}%` }} />
+            {trades.map((t: any, i: number) => (
+              <div key={i} className="flex items-center gap-3 py-2 border-b border-[#1F2937] last:border-0">
+                <div className="flex-1">
+                  <span className="text-sm font-bold text-white">{(t.symbol||'').replace('USDT','')}</span>
+                  <span className="text-[10px] ml-2" style={{color:t.direction==='LONG'?'#00FFA3':'#FF4D4D'}}>{t.direction}</span>
+                  <span className="text-[10px] ml-2 text-[#5A6080]">{t.exitType}</span>
                 </div>
-                <span className="text-xs w-20 text-right" style={{ ...M, color: ss.winRate >= 50 ? '#00FFA3' : '#FF4D4D' }}>{ss.winRate}% ({ss.total}蝑?</span>
+                <div className="text-sm font-bold" style={{...M, color: parseFloat(t.pnlPercent)>=0?'#00FFA3':'#FF4D4D'}}>
+                  {parseFloat(t.pnlPercent)>=0?'+':''}{parseFloat(t.pnlPercent).toFixed(2)}%
+                </div>
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Trade history */}
-      <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-4">
-        <h3 className="text-sm text-[#8B95B0] mb-3">鈭斗?甇瑕</h3>
-        {trades.length > 0 ? (
-          <div className="space-y-2">
-            {trades.map((t: any, i: number) => {
-              const isWin = t.result === 'win' || t.result === 'partial';
-              const bc = isWin ? '#00FFA3' : t.result === 'loss' ? '#FF4D4D' : '#FFB800';
-              const label = t.exitType === 'tp2' ? '?P2' : t.exitType === 'tp1_partial' ? '?TP1' : t.exitType === 'sl' ? '?L' : t.exitType === 'expired' ? '?圈??? : t.exitType;
-              return (
-                <div key={i} className="flex items-center gap-3 py-2 border-b border-[#1F2937] last:border-0" style={{ borderLeftWidth: 3, borderLeftColor: bc }}>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-white">{t.symbol?.replace('USDT','')}</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: (t.direction === 'LONG' || t.direction === 'long' ? '#00FFA3' : '#FF4D4D') + '20', color: t.direction === 'LONG' || t.direction === 'long' ? '#00FFA3' : '#FF4D4D' }}>{t.direction === 'LONG' || t.direction === 'long' ? '??' : '?征'}</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: bc + '20', color: bc }}>{label}</span>
-                    </div>
-                    <div className="text-[10px] mt-0.5" style={M}>
-                      ?脣 ${parseFloat(t.entry).toFixed(2)} ???箏 ${parseFloat(t.exitPrice).toFixed(2)} | 閰? {t.score}/13
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-bold" style={{ ...M, color: parseFloat(t.pnlPercent) >= 0 ? '#00FFA3' : '#FF4D4D' }}>
-                      {parseFloat(t.pnlPercent) >= 0 ? '+' : ''}{parseFloat(t.pnlPercent).toFixed(2)}%
-                    </div>
-                    <div className="text-[10px] text-[#3D4560]">{t.closedAt ? new Date(t.closedAt).toLocaleDateString('zh-TW') : ''}</div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         ) : (
-          <div className="text-center py-8">
-            <span className="text-3xl">??</span>
-            <p className="text-sm text-[#5A6080] mt-3">蝑?閮?閫詨? TP ??SL</p>
-            <p className="text-xs text-[#3D4560] mt-1">閮?餈質馱?冽? 30 蝘?炎??/p>
+          <div className="text-center py-8 text-[#3D4560]">
+            <p className="text-sm">等待訊號觸及 TP 或 SL</p>
+            <p className="text-xs mt-1">訊號追蹤器每 30 秒自動檢查</p>
           </div>
         )}
       </div>
 
-      {/* Market overview */}
       <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-4">
-        <h3 className="text-sm text-[#8B95B0] mb-3">撣璁?</h3>
+        <h3 className="text-sm text-[#8B95B0] mb-3">市場概況</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
           {tickers.map(t => (
             <div key={t.symbol} className="bg-[#0A0E1A] rounded-lg p-3 text-center">
               <div className="text-xs text-[#5A6080]">{t.icon} {t.name}</div>
-              <div className="text-sm font-bold text-white mt-1" style={M}>${t.price >= 1000 ? t.price.toLocaleString(undefined,{maximumFractionDigits:0}) : t.price.toFixed(2)}</div>
-              <div className="text-xs font-bold mt-0.5" style={{...M,color:t.changePct>=0?'#00FFA3':'#FF4D4D'}}>{t.changePct>=0?'+':''}{t.changePct.toFixed(2)}%</div>
+              <div className="text-sm font-bold text-white mt-1" style={M}>{'\$'}{t.price >= 1000 ? t.price.toLocaleString(undefined,{maximumFractionDigits:0}) : t.price.toFixed(2)}</div>
+              <div className="text-xs font-bold mt-0.5" style={{color:t.changePct>=0?'#00FFA3':'#FF4D4D'}}>{t.changePct>=0?'+':''}{t.changePct.toFixed(2)}%</div>
             </div>
           ))}
         </div>
@@ -147,4 +89,3 @@ export default function PortfolioPage() {
     </div>
   );
 }
-
